@@ -27,6 +27,9 @@ ui <- fluidPage(
     # Sidebar with a slider input for number of bins 
     sidebarLayout(
         sidebarPanel(
+          tags$a(href="https://chuembucket.github.io/", 
+                 "Return to main website"),
+          
           column(
             width = 3,
             br(),
