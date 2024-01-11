@@ -48,9 +48,6 @@ ui <- fluidPage(
         mainPanel(
           
             column(9, DTOutput('tbl')),
-            
-          
-          
         )
     )
 )
@@ -66,8 +63,8 @@ server <- function(input, output) {
     geoid = geoid %>% as.numeric()
   )
   
-  ## group by muni and generate summary statistics 
   
+  ## group by muni and generate summary statistics 
   years <- unique(crash_data$`Crash Year`)
   
   tab1 <- crash_data %>% group_by(`MCD Name`, `GEOID10`) %>%
@@ -83,7 +80,7 @@ server <- function(input, output) {
     ) %>% ungroup()
   
   
-  ## give geometr, calc per capita stats, and prepare for shiny
+  ## give geometry, calc per capita stats, and prepare for shiny
   muni_table <- left_join(tab1, mcd_sf %>% select(geoid, pop20),
                           by =c("GEOID10"="geoid")) %>% st_as_sf() %>%
     mutate(
@@ -91,7 +88,7 @@ server <- function(input, output) {
     avg_annual_crash_per_1000 = round(1000*(avg_annual_crashes/pop20),0)
   )  
   
-    
+  
     muni_table1 <- reactive({ muni_table })
     pal<-colorNumeric("viridis", muni_table$avg_annual_crashes)
 
@@ -114,15 +111,13 @@ server <- function(input, output) {
     ### Observe muni select in table
     observeEvent(input$tbl_rows_selected, {
       
+      #get selected rows
       selected_munis <- eventReactive(input$tbl_rows_selected, {
         muni_table1() %>% filter(id %in% input$tbl_rows_selected)
       })
       
       
-      # output$txt = renderPrint({
-      #   selected_munis()
-      # })
-      
+      #add selected rows to map
       leafletProxy("map") %>% 
             #clear() %>%
             addPolygons(
@@ -154,23 +149,6 @@ server <- function(input, output) {
       selectRows(DT_proxy, input$tbl_rows_all)
     })
 
-    
-    
-    # setView(lng = -75.161802, lat = 39.957673, zoom = 11) %>%
-    #   addPolygons(
-    #     data = crash1y,
-    #     fillColor =  ~pal(`TOTAL CRASH`),
-    #     color = "lightgrey",
-    #     weight = 1,
-    #     fillOpacity = 0.8,
-    #     highlight = highlightOptions(
-    #       weight = 2,
-    #       color = "black",
-    #       fillOpacity = 0.8
-    #     ),
-    #     popup = ~htmlEscape(`MCD Name`)) 
-    # crash1y<-crash_sf %>% filter(`Crash Year` == input$year)
-    # pal<-colorNumeric("viridis", crash1y$`TOTAL CRASH`)
     
     
 }
