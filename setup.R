@@ -100,14 +100,13 @@ leaflet() %>% addProviderTiles(providers$CartoDB.DarkMatter) %>%
   addLegend(position = "bottomright", 
             pal = pal, values = (crash1y %>% pull(crash_type)))
             
-# %>%
-#   addLegend(data = msa_wac_sf, position = "bottomright", pal = binpal_wac, values = ~informationTech_wac,
-#             title = "informationTech_wac",
-#             opacity = 1
-#   ) 
+
 
 
 
 ## provide a series of summary statistics by municipality that could be utilized by the OSS team
+
+### export to shiny live
+shinylive::export(appdir = "app", destdir = "docs")
 
 
